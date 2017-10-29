@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+        <item android:title="Map Source">
+            <menu android:checkableBehavior="single">
+                <group android:checkableBehavior="single">
+                <item android:id="@+id/hikeMenuMapnik"
+                    android:title="Mapnik"/>
+                <item android:id="@+id/hikeMenuUSGSTopo"
+                    android:title="USGS National Map (Topo)"
+                    android:checked="true"/>
+                <item android:id="@+id/hikeMenuUSGSSat"
+                    android:title="USGS National Map (Sat)"/>
+                <item android:id="@+id/hikeMenuOpenTopo"
+                    android:title="OpenTopoMap"/>
+                <item android:id="@+id/hikeMenuHikeBike"
+                    android:title="HikeBikeMap"/>
+                </group>
+            </menu>
+        </item>
+</menu>

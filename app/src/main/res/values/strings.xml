@@ -1,0 +1,30 @@
+<resources>
+    <string name="app_name">HikeShare</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="title_activity_hike">HikeActivity</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="ok">Ok</string>
+    <string name="cancel">Cancel</string>
+
+    <!--Attribution Strings-->
+    <string name="usgs_credit">USGS</string>
+    <string name="osm_credit">© OpenStreetMap contributors</string>
+    <string name="open_topo_map_credit">© OpenStreetMap -Mitwirkende, SRTM | Affichage de la carte: © OpenTopoMap (CC-BY-SA)</string>
+
+    <string name="choose_action">Choose an action</string>
+
+
+    <!--String Arrays-->
+    <string-array name="overlay_items">
+        <item>Campfire</item>
+        <item>Tent</item>
+        <item>Trailhead</item>
+        <item>Waterfall</item>
+        <item>Landmark</item>
+    </string-array>
+
+</resources>
