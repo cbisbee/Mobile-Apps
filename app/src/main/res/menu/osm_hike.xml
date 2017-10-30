@@ -1,20 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-        <item android:title="Map Source">
+        <item android:title="@string/map_source">
             <menu android:checkableBehavior="single">
                 <group android:checkableBehavior="single">
                 <item android:id="@+id/hikeMenuMapnik"
-                    android:title="Mapnik"/>
+                    android:title="@string/mapnik"/>
                 <item android:id="@+id/hikeMenuUSGSTopo"
-                    android:title="USGS National Map (Topo)"
+                    android:title="@string/USGS_topo"
                     android:checked="true"/>
                 <item android:id="@+id/hikeMenuUSGSSat"
-                    android:title="USGS National Map (Sat)"/>
+                    android:title="@string/USGS_sat"/>
                 <item android:id="@+id/hikeMenuOpenTopo"
-                    android:title="OpenTopoMap"/>
+                    android:title="@string/open_topo_map"/>
                 <item android:id="@+id/hikeMenuHikeBike"
-                    android:title="HikeBikeMap"/>
+                    android:title="@string/hike_bike_map"/>
                 </group>
             </menu>
         </item>
+    <group>
+    <item android:id="@+id/hikeMenuOffline"
+        android:title="@string/offline"
+        android:checkable="true"
+        android:checked="false"/>
+    <item android:id="@+id/hikeMenuCompass"
+        android:title="@string/compass"
+        android:checkable="true"
+        android:checked="true"/>
+    <item android:id="@+id/hikeMenuDisplayMarkers"
+        android:title="@string/display_markers"
+        android:checkable="true"
+        android:checked="true"/>
+    <item android:id="@+id/hikeMenuPowerSave"
+        android:title="@string/power_save_enabled"
+        android:checkable="true"
+        android:checked="false"/>
+    </group>
 </menu>

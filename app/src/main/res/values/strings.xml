@@ -7,8 +7,14 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
-    <string name="ok">Ok</string>
+    <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
+
+    <string name="offline">Offline</string>
+    <string name="compass">Compass</string>
+    <string name="display_markers">Display Markers</string>
+    <string name="power_save_enabled">Power Save Enabled</string>
+    <string name="map_source">Map Source</string>
 
     <!--Attribution Strings-->
     <string name="usgs_credit">USGS</string>
@@ -26,5 +32,12 @@
         <item>Waterfall</item>
         <item>Landmark</item>
     </string-array>
+
+    <!--Map Source Names-->
+    <string name="mapnik">Mapnik</string>
+    <string name="USGS_topo">USGS National Map(Topo)</string>
+    <string name="USGS_sat">USGS National Map(Sat)</string>
+    <string name="open_topo_map">OpenTopoMap</string>
+    <string name="hike_bike_map">HikeBikeMap</string>
 
 </resources>
