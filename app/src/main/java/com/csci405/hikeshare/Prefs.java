@@ -53,10 +53,10 @@ public class Prefs implements AutoCloseable {
     }
 
     public static final String AUTHENTICATED = "authenticated";
-    public static final boolean AUTHENTICAED_DEFAULT = false;
+    public static final boolean AUTHENTICATED_DEFAULT = false;
 
     public boolean authenticated() {
-        return preferences().getBoolean(AUTHENTICATED,AUTHENTICAED_DEFAULT);
+        return preferences().getBoolean(AUTHENTICATED,AUTHENTICATED_DEFAULT);
     }
 
     public void authenticated(boolean value) {
@@ -64,6 +64,26 @@ public class Prefs implements AutoCloseable {
             editor().putBoolean(AUTHENTICATED, value);
         }
     }
+
+    public static final String OFFLINE = "offline";
+    public static final boolean OFFLINE_DEFAULT = false;
+    public boolean offline() {return preferences().getBoolean(OFFLINE,OFFLINE_DEFAULT);}
+
+    public static final String COMPASS = "compass";
+    public static final boolean COMPASS_DEFAULT = true;
+    public boolean compass() {return preferences().getBoolean(COMPASS,COMPASS_DEFAULT);}
+
+    public static final String POWERSAVE = "powersave";
+    public static final boolean POWERSAVE_DEFAULT = false;
+    public boolean powersave(){return preferences().getBoolean(POWERSAVE,POWERSAVE_DEFAULT);}
+
+    public static final String MARKERS = "markers";
+    public static final boolean MARKERS_DEFAULT = false;
+    public boolean markers() {return preferences().getBoolean(MARKERS,MARKERS_DEFAULT);}
+
+    public static final String MAPSOURCE = "mapsource";
+    public static final String MAPSOURCE_DEFAULT = "USGS National Map (TOPO)";
+    public String mapsource(){return preferences().getString(MAPSOURCE,MAPSOURCE_DEFAULT);}
 
     public static final String USER = "user";
     public static final String USER_DEFAULT = null;

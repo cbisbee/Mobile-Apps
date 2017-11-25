@@ -21,15 +21,18 @@ import java.util.List;
 
 public class ArrayAdapterWithIcon extends ArrayAdapter<String> {
     private List<Integer> images;
+    private List<String> items;
 
     public ArrayAdapterWithIcon(Context _context,List<String> _items, List<Integer> _images){
         super(_context, R.layout.fragment_overlayitem, R.id.content,_items);
         this.images = _images;
+        this.items = _items;
     }
 
     public ArrayAdapterWithIcon(Context _context, List<String> _items, Integer[] _images){
         super(_context,R.layout.fragment_overlayitem, R.id.content,_items);
         this.images = Arrays.asList(_images);
+        this.items = _items;
     }
 
     public ArrayAdapterWithIcon(Context _context, int _items, int _images){

@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "535874306621",
+    "firebase_url": "https://hikeshare-ad5e6.firebaseio.com",
+    "project_id": "hikeshare-ad5e6",
+    "storage_bucket": "hikeshare-ad5e6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:535874306621:android:a5598fca9d0853b7",
+        "android_client_info": {
+          "package_name": "com.csci405.hikeshare"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "535874306621-0cbr20r556ratodknp0s9lfhgce4q14g.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.csci405.hikeshare",
+            "certificate_hash": "446d9a041d2fed3099e5f79e96c738f21e813562"
+          }
+        },
+        {
+          "client_id": "535874306621-97pt3lkbq3a0re8d8uqd59a9g94pkv59.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBBnuVjfXvHpo3UZ0SRpVAujVB9kA4V63E"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "535874306621-97pt3lkbq3a0re8d8uqd59a9g94pkv59.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

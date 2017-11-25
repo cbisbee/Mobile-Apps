@@ -53,14 +53,6 @@ public class OverlayItemFragment extends DialogFragment {
             public void onClick(DialogInterface dialogInterface, int i) {
                 resourceId = icons[i];
                 mListener.onDialogPositiveClick(OverlayItemFragment.this, resourceId);
-                //Toast.makeText(getActivity(), "Item Selected: " + i, Toast.LENGTH_SHORT).show();
-            }
-        });
-        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                //resourceId = icons[i];
-                mListener.onDialogPositiveClick(OverlayItemFragment.this, resourceId);
             }
         });
         builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -72,7 +64,6 @@ public class OverlayItemFragment extends DialogFragment {
         });
 
         return builder.create();
-
     }
 
 

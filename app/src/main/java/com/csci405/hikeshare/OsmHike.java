@@ -2,6 +2,7 @@ package com.csci405.hikeshare;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
 import android.preference.PreferenceManager;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -34,6 +35,7 @@ import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 
 public class OsmHike extends CoreActivity implements OverlayItemFragment.OnListFragmentInteractionListener {
@@ -49,6 +51,9 @@ public class OsmHike extends CoreActivity implements OverlayItemFragment.OnListF
     ItemizedOverlayWithFocus<OverlayItem> mOverlay;
     private int markerDrawResource = R.drawable.marker_default;
     ArrayList<OverlayItem> overlayItemList;
+    Prefs.Lazy mPrefs;
+
+    GpsMyLocationProvider mLocationProvider;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -56,6 +61,9 @@ public class OsmHike extends CoreActivity implements OverlayItemFragment.OnListF
         final Context ctx = getApplicationContext();
         //important! set your user agent to prevent getting banned from the osm servers
         Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);
+
+        mLocationProvider = new GpsMyLocationProvider(ctx);
+        Set<String> sources = mLocationProvider.getLocationSources();
 
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
         setContentView(R.layout.activity_osm_hike);
