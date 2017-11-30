@@ -16,6 +16,12 @@
     <string name="power_save_enabled">Power Save Enabled</string>
     <string name="map_source">Map Source</string>
 
+    <!--Main Activity Strings-->
+    <string name="gohike">Go Hike!</string>
+    <string name="explore">Explore</string>
+    <string name="myhikes">My Hikes</string>
+    <string name="customize">Customize</string>
+
     <!--Attribution Strings-->
     <string name="usgs_credit">USGS</string>
     <string name="osm_credit">© OpenStreetMap contributors</string>
