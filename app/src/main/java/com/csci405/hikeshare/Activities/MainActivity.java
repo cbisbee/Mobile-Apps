@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
         //Finding the controls in the view
         goHikeBtn = (Button)findViewById(R.id.main_activity_GoHike_btn);
         myHikesBtn = (Button)findViewById(R.id.main_activity_MyHikes_btn);
-        exploreBtn = (Button)findViewById(R.id.main_activity_Explore_btn);
+        exploreBtn = (Button)findViewById(R.id.main_activity_MapTileManager_btn);
         customizeBtn = (Button)findViewById(R.id.main_activity_Customize_btn);
 
         //Setting the on click listeners
@@ -40,8 +40,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
         exploreBtn.setOnClickListener((View v) -> {
-            // Launch the ExploreHikesActivity
-            Intent intent = new Intent(this,ExploreHikesActivity.class);
+            // Launch the MapTileManagerActivity
+            Intent intent = new Intent(this,MapTileManagerActivity.class);
             startActivity(intent);
         });
 

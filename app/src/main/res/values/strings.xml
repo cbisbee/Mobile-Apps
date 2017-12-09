@@ -18,7 +18,7 @@
 
     <!--Main Activity Strings-->
     <string name="gohike">Go Hike!</string>
-    <string name="explore">Explore</string>
+    <string name="maptilemanager">Map Tile Manager</string>
     <string name="myhikes">My Hikes</string>
     <string name="customize">Customize</string>
 
@@ -136,5 +136,18 @@
     <string name="settings_display_scale_bar">Display Map Scale Bar</string>
     <string name="settings_display_zoom_buttons_bar">Display Map Zoom Buttons</string>
     <string name="settings_powersave_mode">Powersave Mode</string>
+
+    <!-- Map Tile Manager Activity Strings -->
+    <string name="cache_max_size">Maximum Allowed Tile Cache Size</string>
+    <string name="cache_size">Current Size of the Tile Cache</string>
+    <string name="pending_job_count">Pending Job Count</string>
+    <string name="cache_info_title">General Tile Cache Information</string>
+    <string name="browse_tile_cache">Browse Tile Cache</string>
+    <string name="edit_tile_cache">View/Edit Tile Cache</string>
+    <string name="purge_tile_cache">Purge Tile Cache</string>
+    <string name="purge_cache_source">Purge a Specific Tile Source</string>
+    <string name="download_region">Download New Region</string>
+
+
 
 </resources>

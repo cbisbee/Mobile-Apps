@@ -33,7 +33,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".Activities.MyHikesActivity" />
-        <activity android:name=".Activities.ExploreHikesActivity" />
+        <activity android:name=".Activities.MapTileManagerActivity" />
         <activity android:name=".Activities.CustomizeActivity"></activity>
     </application>
 

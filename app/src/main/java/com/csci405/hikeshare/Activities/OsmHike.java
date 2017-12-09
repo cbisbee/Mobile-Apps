@@ -27,6 +27,7 @@ import org.osmdroid.api.IMapController;
 import org.osmdroid.bonuspack.kml.KmlDocument;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.events.MapEventsReceiver;
+import org.osmdroid.tileprovider.cachemanager.CacheManager;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.BoundingBox;
 import org.osmdroid.util.BoundingBoxE6;
@@ -64,6 +65,8 @@ public class OsmHike extends CoreActivity implements OverlayItemFragment.OnListF
     ArrayList<OverlayItem> overlayItemList;
     Prefs mPrefs;
     KmlDocument kmlDoc;
+    CacheManager mCacheManager;
+    CacheManager.CacheManagerTask downloadingTask=null;
 
     GpsMyLocationProvider mLocationProvider;
 
@@ -74,28 +77,22 @@ public class OsmHike extends CoreActivity implements OverlayItemFragment.OnListF
         final Context ctx = getApplicationContext();
         //important! set your user agent to prevent getting banned from the osm servers
         Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);
-
         mLocationProvider = new GpsMyLocationProvider(ctx);
         Set<String> sources = mLocationProvider.getLocationSources();
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
         setContentView(R.layout.activity_osm_hike);
-
         attributionView = (TextView)findViewById(R.id.osm_hike_attributionTV);
-
         mMapView = (MapView) findViewById(R.id.map);
+        mCacheManager = new CacheManager(mMapView);
 
+        mCompassOverlay = new CompassOverlay(ctx, new InternalCompassOrientationProvider(ctx), mMapView);
 
         prepareTheMap(ctx);
-
-
-
-
 
 
         //your items
         overlayItemList = new ArrayList<OverlayItem>();
         //items.add(new OverlayItem("Title", "Description", new GeoPoint(39.143407,-108.701759))); // Lat/Lon decimal degrees
-
         //the overlay
         mOverlay = new ItemizedOverlayWithFocus<OverlayItem>(overlayItemList,
                 new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
@@ -114,7 +111,6 @@ public class OsmHike extends CoreActivity implements OverlayItemFragment.OnListF
                     }
                 },ctx);
         mOverlay.setFocusItemsOnTap(true);
-
         mMapView.getOverlays().add(mOverlay);
 
 
@@ -134,7 +130,6 @@ public class OsmHike extends CoreActivity implements OverlayItemFragment.OnListF
                 return false;
             }
         };
-
 
         MapEventsOverlay OverlayEvents = new MapEventsOverlay(getBaseContext(), mReceive);
         mMapView.getOverlays().add(OverlayEvents);
@@ -211,6 +206,30 @@ public class OsmHike extends CoreActivity implements OverlayItemFragment.OnListF
             menu.getItem(0).getSubMenu().getItem(1).setChecked(true);
         }
 
+        if(prefs().offline()){
+            menu.getItem(1).setChecked(true);
+        } else {
+            menu.getItem(1).setChecked(false);
+        }
+
+        if(mPrefs.compass()){
+            menu.getItem(2).setChecked(true);
+        } else {
+            menu.getItem(2).setChecked(false);
+        }
+
+        if(mPrefs.markers()){
+            menu.getItem(3).setChecked(true);
+        } else {
+            menu.getItem(3).setChecked(false);
+        }
+
+        if(mPrefs.powersave()){
+            menu.getItem(4).setChecked(true);
+        } else {
+            menu.getItem(4).setChecked(true);
+        }
+
         return true;
     }
 
@@ -241,6 +260,52 @@ public class OsmHike extends CoreActivity implements OverlayItemFragment.OnListF
                 mMapView.setTileSource(TileSourceFactory.HIKEBIKEMAP);
                 item.setChecked(true);
                 attributionView.setText(getString(R.string.osm_credit));
+                return true;
+            case R.id.hikeMenuOffline:
+                if(item.isChecked()){
+                    //Go into online mode
+                    mMapView.setUseDataConnection(true);
+                    mMapView.invalidate();
+                    item.setChecked(false);
+                } else {
+                    //Go into offline mode
+                    mMapView.setUseDataConnection(false);
+                    mMapView.invalidate();
+                    item.setChecked(true);
+                }
+                return true;
+            case R.id.hikeMenuCompass:
+                if(item.isChecked()){
+                    //remove the compass
+                    mCompassOverlay.disableCompass();
+                    mMapView.invalidate();
+                    item.setChecked(false);
+                } else {
+                    //add the compass
+                    mCompassOverlay.enableCompass(new InternalCompassOrientationProvider(this));
+                    mMapView.invalidate();
+                    item.setChecked(true);
+                }
+                return true;
+            case R.id.hikeMenuDisplayMarkers:
+                if(item.isChecked()){
+                    //remove the markers
+                    item.setChecked(false);
+                }else {
+                    //add the markers
+                    item.setChecked(true);
+                }
+                return true;
+            case R.id.hikeMenuPowerSave:
+                if(item.isChecked()){
+                    //Go out of powersave mode
+                    item.setChecked(false);
+
+                } else {
+                    //go into powersave mode
+                    item.setChecked(true);
+
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -316,10 +381,11 @@ public class OsmHike extends CoreActivity implements OverlayItemFragment.OnListF
         }
 
         if(mPrefs.compass()){
-            mCompassOverlay = new CompassOverlay(_ctx, new InternalCompassOrientationProvider(_ctx), mMapView);
             mCompassOverlay.enableCompass();
-            mMapView.getOverlays().add(this.mCompassOverlay);
+        } else {
+            mCompassOverlay.disableCompass();
         }
+        mMapView.getOverlays().add(this.mCompassOverlay);
 
         if(mPrefs.scalebar()){
             mScaleBarOverlay = new ScaleBarOverlay(mMapView);
@@ -328,6 +394,12 @@ public class OsmHike extends CoreActivity implements OverlayItemFragment.OnListF
             getWindowManager().getDefaultDisplay().getMetrics(metrics);
             mScaleBarOverlay.setScaleBarOffset(metrics.widthPixels / 2, 10);
             mMapView.getOverlays().add(this.mScaleBarOverlay);
+        }
+
+        if(prefs().offline()){
+            mMapView.setUseDataConnection(false);
+        } else {
+            mMapView.setUseDataConnection(true);
         }
 
         //This is the default start lcoation
