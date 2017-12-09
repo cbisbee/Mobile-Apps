@@ -2,6 +2,8 @@ package com.csci405.hikeshare;
 
 import android.util.Log;
 
+import com.csci405.hikeshare.Activities.OsmHike;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 

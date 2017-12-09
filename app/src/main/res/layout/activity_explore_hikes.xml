@@ -4,6 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.csci405.hikeshare.ExploreHikesActivity">
+    tools:context="com.csci405.hikeshare.Activities.ExploreHikesActivity">
 
 </android.support.constraint.ConstraintLayout>

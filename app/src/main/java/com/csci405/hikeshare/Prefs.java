@@ -68,22 +68,65 @@ public class Prefs implements AutoCloseable {
     public static final String OFFLINE = "offline";
     public static final boolean OFFLINE_DEFAULT = false;
     public boolean offline() {return preferences().getBoolean(OFFLINE,OFFLINE_DEFAULT);}
+    public void offline(boolean value) {
+        if(offline() != value){
+            editor().putBoolean(OFFLINE,value);
+        }
+    }
 
     public static final String COMPASS = "compass";
     public static final boolean COMPASS_DEFAULT = true;
     public boolean compass() {return preferences().getBoolean(COMPASS,COMPASS_DEFAULT);}
+    public void compass(boolean value) {
+        if(compass() != value){
+            editor().putBoolean(COMPASS,value);
+        }
+    }
+
+    public static final String SCALEBAR = "scalebar";
+    public static final boolean SCALEBAR_DEFAULT = false;
+    public boolean scalebar() {return preferences().getBoolean(SCALEBAR,SCALEBAR_DEFAULT);}
+    public void scalebar(boolean value) {
+        if(scalebar() != value){
+            editor().putBoolean(SCALEBAR,value);
+        }
+    }
+
+    public static final String ZOOM = "zoom";
+    public static final boolean ZOOM_DEFAULT = false;
+    public boolean zoom() {return preferences().getBoolean(ZOOM,ZOOM_DEFAULT);}
+    public void zoom(boolean value) {
+        if(zoom() != value){
+            editor().putBoolean(ZOOM,value);
+        }
+    }
 
     public static final String POWERSAVE = "powersave";
     public static final boolean POWERSAVE_DEFAULT = false;
     public boolean powersave(){return preferences().getBoolean(POWERSAVE,POWERSAVE_DEFAULT);}
+    public void powersave(boolean value) {
+        if(powersave() != value){
+            editor().putBoolean(POWERSAVE,value);
+        }
+    }
 
     public static final String MARKERS = "markers";
     public static final boolean MARKERS_DEFAULT = false;
     public boolean markers() {return preferences().getBoolean(MARKERS,MARKERS_DEFAULT);}
+    public void markers(boolean value) {
+        if(markers() != value){
+            editor().putBoolean(MARKERS,value);
+        }
+    }
 
     public static final String MAPSOURCE = "mapsource";
     public static final String MAPSOURCE_DEFAULT = "USGS National Map (TOPO)";
     public String mapsource(){return preferences().getString(MAPSOURCE,MAPSOURCE_DEFAULT);}
+    public void mapsource(String value) {
+        if(mapsource() != value){
+            editor().putString(MAPSOURCE,value);
+        }
+    }
 
     public static final String USER = "user";
     public static final String USER_DEFAULT = null;

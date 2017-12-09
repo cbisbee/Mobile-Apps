@@ -1,4 +1,4 @@
-package com.csci405.hikeshare;
+package com.csci405.hikeshare.Activities;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -12,6 +12,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.csci405.hikeshare.R;
 
 public class HikeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {

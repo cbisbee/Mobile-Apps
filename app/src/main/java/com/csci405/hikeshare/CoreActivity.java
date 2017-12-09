@@ -31,7 +31,7 @@ public class CoreActivity extends AppCompatActivity implements AutoCloseable {
     //public StorageReference mStorageRef;
 
 
-    Prefs prefs() { return mModel.self().prefs(); }
+    public Prefs prefs() { return mModel.self().prefs(); }
     LiteDB liteDB() { return mModel.self().liteDB(); }
     User user() { return mModel.self().user(); }
     //Courses courses() { return mModel.self().courses(); }

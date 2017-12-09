@@ -17,24 +17,24 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".HikeActivity"
+            android:name=".Activities.HikeActivity"
             android:label="@string/title_activity_hike"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".OsmHike">
+        <activity android:name=".Activities.OsmHike">
         </activity>
         <activity
-            android:name=".SettingsActivity"
+            android:name=".Activities.SettingsActivity"
             android:label="@string/title_activity_settings" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".Activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MyHikesActivity" />
-        <activity android:name=".ExploreHikesActivity" />
-        <activity android:name=".CustomizeActivity"></activity>
+        <activity android:name=".Activities.MyHikesActivity" />
+        <activity android:name=".Activities.ExploreHikesActivity" />
+        <activity android:name=".Activities.CustomizeActivity"></activity>
     </application>
 
 </manifest>

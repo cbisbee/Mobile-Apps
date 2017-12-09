@@ -1,6 +1,7 @@
-package com.csci405.hikeshare;
+package com.csci405.hikeshare.Activities;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.preference.PreferenceManager;
@@ -15,14 +16,23 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.csci405.hikeshare.AsyncKmlRetriever;
+import com.csci405.hikeshare.BuildConfig;
+import com.csci405.hikeshare.CoreActivity;
 import com.csci405.hikeshare.Fragments.OverlayItemFragment;
+import com.csci405.hikeshare.Prefs;
+import com.csci405.hikeshare.R;
 
 import org.osmdroid.api.IMapController;
+import org.osmdroid.bonuspack.kml.KmlDocument;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.events.MapEventsReceiver;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.util.BoundingBox;
+import org.osmdroid.util.BoundingBoxE6;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.FolderOverlay;
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
 import org.osmdroid.views.overlay.ItemizedOverlayWithFocus;
 import org.osmdroid.views.overlay.MapEventsOverlay;
@@ -34,6 +44,7 @@ import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -51,12 +62,14 @@ public class OsmHike extends CoreActivity implements OverlayItemFragment.OnListF
     ItemizedOverlayWithFocus<OverlayItem> mOverlay;
     private int markerDrawResource = R.drawable.marker_default;
     ArrayList<OverlayItem> overlayItemList;
-    Prefs.Lazy mPrefs;
+    Prefs mPrefs;
+    KmlDocument kmlDoc;
 
     GpsMyLocationProvider mLocationProvider;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        mPrefs = prefs();
         super.onCreate(savedInstanceState);
         final Context ctx = getApplicationContext();
         //important! set your user agent to prevent getting banned from the osm servers
@@ -64,47 +77,15 @@ public class OsmHike extends CoreActivity implements OverlayItemFragment.OnListF
 
         mLocationProvider = new GpsMyLocationProvider(ctx);
         Set<String> sources = mLocationProvider.getLocationSources();
-
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
         setContentView(R.layout.activity_osm_hike);
 
         attributionView = (TextView)findViewById(R.id.osm_hike_attributionTV);
 
         mMapView = (MapView) findViewById(R.id.map);
-        mMapView.setTileSource(TileSourceFactory.USGS_TOPO);
-        attributionView.setText(getString(R.string.usgs_credit));
 
-        //Add the Zoom buttons to the map and allow the user to zoom with their fingers
-        mMapView.setBuiltInZoomControls(true);
-        mMapView.setMultiTouchControls(true);
 
-        mMapController = mMapView.getController();
-        mMapController.setZoom(13);
-        startPoint = new GeoPoint(39.143407, -108.701759);
-        mMapController.setCenter(startPoint);
-
-        mLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(ctx),mMapView);
-        mLocationOverlay.enableMyLocation();
-        mLocationOverlay.enableFollowLocation();
-        mMapView.getOverlays().add(this.mLocationOverlay);
-
-        mCompassOverlay = new CompassOverlay(ctx, new InternalCompassOrientationProvider(ctx), mMapView);
-        mCompassOverlay.enableCompass();
-        mMapView.getOverlays().add(this.mCompassOverlay);
-
-        mRotationGestureOverlay = new RotationGestureOverlay(ctx, mMapView);
-        mRotationGestureOverlay.setEnabled(true);
-        mMapView.setMultiTouchControls(true);
-        mMapView.getOverlays().add(this.mRotationGestureOverlay);
-
-        mScaleBarOverlay = new ScaleBarOverlay(mMapView);
-        mScaleBarOverlay.setCentred(true);
-        //TODO: play around with these values to get the location on screen in the right place for your application
-        DisplayMetrics metrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        mScaleBarOverlay.setScaleBarOffset(metrics.widthPixels / 2, 10);
-        mMapView.getOverlays().add(this.mScaleBarOverlay);
-
+        prepareTheMap(ctx);
 
 
 
@@ -128,6 +109,7 @@ public class OsmHike extends CoreActivity implements OverlayItemFragment.OnListF
                     public boolean onItemLongPress(final int index, final OverlayItem item) {
                         //TODO: make item long press bring up a dialog to ask the user if they want to delete the marker
                         overlayItemList.clear();
+                        mMapView.invalidate();
                         return false;
                     }
                 },ctx);
@@ -156,6 +138,44 @@ public class OsmHike extends CoreActivity implements OverlayItemFragment.OnListF
 
         MapEventsOverlay OverlayEvents = new MapEventsOverlay(getBaseContext(), mReceive);
         mMapView.getOverlays().add(OverlayEvents);
+
+
+
+
+        /*
+        //KML Stuff
+        kmlDoc = new KmlDocument();
+        //File localFile = kmlDoc.getDefaultPathForAndroid("my_route.kml");
+        //kmlDoc.parseKMLFile(localFile);
+        String url = "http://mapsengine.google.com/map/kml?forcekml=1&mid=12phHnQP7CcPH07FaT9p1YyaNvCE";
+        //String url = "http://www.yournavigation.org/api/1.0/gosmore.php?format=kml&flat=52.215676&flon=5.963946&tlat=52.2573&tlon=6.1799%27%3Ehttp://www.yournavigation.org/api/1.0/gosmore.php?format=kml&amp;flat=52.215676&amp;flon=5.963946&amp;tlat=52.2573&amp;tlon=6.1799";
+        //String url = "testfail";
+
+        AsyncKmlRetriever.AsyncGet kmlUrlRetriever = new AsyncKmlRetriever.AsyncGet() {
+            @Override
+            public void getKml() {
+                try {
+                    kmlDoc.parseKMLUrl(url);
+
+                    //Set up the map overlay for the KML
+                    FolderOverlay kmlOverlay = (FolderOverlay)kmlDoc.mKmlRoot.buildOverlay(mMapView, null, null, kmlDoc);
+                    mMapView.getOverlays().add(kmlOverlay);
+                    BoundingBox bb = kmlDoc.mKmlRoot.getBoundingBox();
+                    mMapView.getController().setCenter(bb.getCenter());
+                    mMapView.zoomToBoundingBox(bb,false); //This pretty much has to be false for this to actually work, yay!
+                    mMapView.invalidate();
+
+                } catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        AsyncKmlRetriever asyncGetter = new AsyncKmlRetriever(getApplicationContext(),kmlUrlRetriever);
+        asyncGetter.execute();
+
+        //kmlDoc.saveAsKML(localFile);
+        */
     }
 
     @Override
@@ -165,12 +185,32 @@ public class OsmHike extends CoreActivity implements OverlayItemFragment.OnListF
         //if you make changes to the configuration, use
         //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         //Configuration.getInstance().save(this, prefs);
-        Configuration.getInstance().load(this, PreferenceManager.getDefaultSharedPreferences(this));
+        //Configuration.getInstance().load(this, PreferenceManager.getDefaultSharedPreferences(this));
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.osm_hike, menu);
+
+        if(mPrefs.mapsource().equals("USGS National Map (Topo)")) {
+            menu.getItem(0).getSubMenu().getItem(1).setChecked(true);
+        }
+        else if(mPrefs.mapsource().equals("USGS National Map (Sat)")) {
+            menu.getItem(0).getSubMenu().getItem(2).setChecked(true);
+        }
+        else if(mPrefs.mapsource().equals("Mapnik")) {
+            menu.getItem(0).getSubMenu().getItem(0).setChecked(true);
+        }
+        else if(mPrefs.mapsource().equals("OpenTopoMap")) {
+            menu.getItem(0).getSubMenu().getItem(3).setChecked(true);
+        }
+        else if(mPrefs.mapsource().equals("HikeBikeMap")) {
+            menu.getItem(0).getSubMenu().getItem(4).setChecked(true);
+        }
+        else{
+            menu.getItem(0).getSubMenu().getItem(1).setChecked(true);
+        }
+
         return true;
     }
 
@@ -242,5 +282,71 @@ public class OsmHike extends CoreActivity implements OverlayItemFragment.OnListF
     public void onDialogNegativeClick(DialogFragment dialog, int resource) {
         // User touched the dialog's negative button
         //TODO: Does there need to be any logic in here?
+    }
+
+    public void prepareTheMap(Context _ctx){
+        if(mPrefs.mapsource().equals("USGS National Map (Topo)")) {
+            mMapView.setTileSource(TileSourceFactory.USGS_TOPO);
+            attributionView.setText(getString(R.string.usgs_credit));
+        }
+        else if(mPrefs.mapsource().equals("USGS National Map (Sat)")) {
+            mMapView.setTileSource(TileSourceFactory.USGS_SAT);
+            attributionView.setText(getString(R.string.usgs_credit));
+        }
+        else if(mPrefs.mapsource().equals("Mapnik")) {
+            mMapView.setTileSource(TileSourceFactory.MAPNIK);
+            attributionView.setText(getString(R.string.usgs_credit));
+        }
+        else if(mPrefs.mapsource().equals("OpenTopoMap")) {
+            mMapView.setTileSource(TileSourceFactory.OpenTopo);
+            attributionView.setText(getString(R.string.open_topo_map_credit));
+        }
+        else if(mPrefs.mapsource().equals("HikeBikeMap")) {
+            mMapView.setTileSource(TileSourceFactory.HIKEBIKEMAP);
+            attributionView.setText(getString(R.string.hike_bike_map));
+        }
+        else{
+            mMapView.setTileSource(TileSourceFactory.USGS_TOPO);
+            attributionView.setText(getString(R.string.usgs_credit));
+        }
+
+        if(mPrefs.zoom()){
+            //Add the Zoom buttons to the map and allow the user to zoom with their fingers
+            mMapView.setBuiltInZoomControls(true);
+        }
+
+        if(mPrefs.compass()){
+            mCompassOverlay = new CompassOverlay(_ctx, new InternalCompassOrientationProvider(_ctx), mMapView);
+            mCompassOverlay.enableCompass();
+            mMapView.getOverlays().add(this.mCompassOverlay);
+        }
+
+        if(mPrefs.scalebar()){
+            mScaleBarOverlay = new ScaleBarOverlay(mMapView);
+            mScaleBarOverlay.setCentred(true);
+            DisplayMetrics metrics = new DisplayMetrics();
+            getWindowManager().getDefaultDisplay().getMetrics(metrics);
+            mScaleBarOverlay.setScaleBarOffset(metrics.widthPixels / 2, 10);
+            mMapView.getOverlays().add(this.mScaleBarOverlay);
+        }
+
+        //This is the default start lcoation
+        mMapView.setMultiTouchControls(true);
+        mMapController = mMapView.getController();
+        mMapController.setZoom(5);
+        startPoint = new GeoPoint(39.143407, -108.701759);
+        mMapController.setCenter(startPoint);
+
+        //This is the follow location stuff
+        mLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(_ctx),mMapView);
+        mLocationOverlay.enableMyLocation();
+        mLocationOverlay.enableFollowLocation();
+        mMapView.getOverlays().add(this.mLocationOverlay);
+
+        //This enables the gestures for rotations and zooming
+        mRotationGestureOverlay = new RotationGestureOverlay(_ctx, mMapView);
+        mRotationGestureOverlay.setEnabled(true);
+        mMapView.setMultiTouchControls(true);
+        mMapView.getOverlays().add(this.mRotationGestureOverlay);
     }
 }
