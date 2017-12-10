@@ -18,32 +18,18 @@
             android:textStyle="bold"/>
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/cache_max_size"/>
+            android:textAlignment="center"
+            android:text="@string/source_tile_count"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/cache_max_size_TV"/>
+            android:id="@+id/source_tile_count_TV">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/cache_size"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/cache_size_TV"/>
+        </TextView>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/pending_job_count"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/pending_job_count_TV"/>
 
         <TextView
             android:layout_width="match_parent"

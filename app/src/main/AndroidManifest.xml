@@ -20,8 +20,7 @@
             android:name=".Activities.HikeActivity"
             android:label="@string/title_activity_hike"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".Activities.OsmHike">
-        </activity>
+        <activity android:name=".Activities.OsmHike"></activity>
         <activity
             android:name=".Activities.SettingsActivity"
             android:label="@string/title_activity_settings" />
@@ -34,7 +33,8 @@
         </activity>
         <activity android:name=".Activities.MyHikesActivity" />
         <activity android:name=".Activities.MapTileManagerActivity" />
-        <activity android:name=".Activities.CustomizeActivity"></activity>
+        <activity android:name=".Activities.CustomizeActivity" />
+        <activity android:name=".Activities.DownloadRegionActivity"></activity>
     </application>
 
 </manifest>

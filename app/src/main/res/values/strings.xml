@@ -147,7 +147,11 @@
     <string name="purge_tile_cache">Purge Tile Cache</string>
     <string name="purge_cache_source">Purge a Specific Tile Source</string>
     <string name="download_region">Download New Region</string>
+    <string name="source_tile_count">(Source : Tile Count)</string>
 
+    <!-- Regional Tile Download -->
+    <string name="download_region_title">Download Tiles By Region</string>
+    <string name="download_path_title">Download Tiles By Path</string>
 
 
 </resources>
