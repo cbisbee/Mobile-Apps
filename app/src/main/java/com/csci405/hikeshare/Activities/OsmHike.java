@@ -21,17 +21,13 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.csci405.hikeshare.AsyncKmlRetriever;
 import com.csci405.hikeshare.BuildConfig;
 import com.csci405.hikeshare.CoreActivity;
 import com.csci405.hikeshare.Fragments.OverlayItemFragment;
 import com.csci405.hikeshare.Prefs;
 import com.csci405.hikeshare.R;
-
 import org.osmdroid.api.IMapController;
 import org.osmdroid.bonuspack.kml.KmlDocument;
-import org.osmdroid.bonuspack.kml.KmlFeature;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.events.MapEventsReceiver;
 import org.osmdroid.tileprovider.cachemanager.CacheManager;
@@ -51,13 +47,7 @@ import org.osmdroid.views.overlay.compass.InternalCompassOrientationProvider;
 import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
-
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -78,8 +68,7 @@ public class OsmHike extends CoreActivity implements OverlayItemFragment.OnListF
     Prefs mPrefs;
     KmlDocument kmlDoc;
     CacheManager mCacheManager;
-    CacheManager.CacheManagerTask downloadingTask=null;
-    private static final int READ_REQUEST_CODE = 42;
+    File intentKMLFile;
 
 
     GpsMyLocationProvider mLocationProvider;
@@ -102,52 +91,6 @@ public class OsmHike extends CoreActivity implements OverlayItemFragment.OnListF
         mCompassOverlay = new CompassOverlay(ctx, new InternalCompassOrientationProvider(ctx), mMapView);
 
         prepareTheMap(ctx);
-
-
-        //your items
-        overlayItemList = new ArrayList<OverlayItem>();
-        //items.add(new OverlayItem("Title", "Description", new GeoPoint(39.143407,-108.701759))); // Lat/Lon decimal degrees
-        //the overlay
-        mOverlay = new ItemizedOverlayWithFocus<OverlayItem>(overlayItemList,
-                new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
-                    @Override
-                    public boolean onItemSingleTapUp(final int index, final OverlayItem item) {
-                        //do something
-                        //TODO: figure out the functionality for this
-                        return true;
-                    }
-                    @Override
-                    public boolean onItemLongPress(final int index, final OverlayItem item) {
-                        //TODO: make item long press bring up a dialog to ask the user if they want to delete the marker
-                        overlayItemList.clear();
-                        mMapView.invalidate();
-                        return false;
-                    }
-                },ctx);
-        mOverlay.setFocusItemsOnTap(true);
-        mMapView.getOverlays().add(mOverlay);
-
-
-
-        MapEventsReceiver mReceive = new MapEventsReceiver() {
-            @Override
-            public boolean singleTapConfirmedHelper(GeoPoint p) {
-                //Toast.makeText(getBaseContext(),p.getLatitude() + " - "+p.getLongitude(),Toast.LENGTH_LONG).show();
-                //TODO: Figure out this logic
-                return false;
-            }
-
-            @Override
-            public boolean longPressHelper(GeoPoint point) {
-                currentLongPressPoint = point;
-                selectLongPressAction();
-                return false;
-            }
-        };
-
-        MapEventsOverlay OverlayEvents = new MapEventsOverlay(getBaseContext(), mReceive);
-        mMapView.getOverlays().add(OverlayEvents);
-
 
         /*
         //KML Stuff
@@ -320,7 +263,15 @@ public class OsmHike extends CoreActivity implements OverlayItemFragment.OnListF
                 return true;
             case R.id.hikeMenuOpenKML:
                 //Add a method to actually get the file name
-                addKmlGivenFileName("TheFullOtto.kml");
+                Bundle fileBundle = getIntent().getBundleExtra("KMLFILE");
+                if(fileBundle != null){
+                    //Don't do anything
+                    Object intentFile = fileBundle.get("SerialFile");
+                    intentKMLFile = (File)intentFile;
+                    addKmlGivenFile(intentKMLFile);
+                } else {
+                    Toast.makeText(getBaseContext(),"No hike selected, go to MyHikes and select a hike!",Toast.LENGTH_LONG).show();
+                }
 
             default:
                 return super.onOptionsItemSelected(item);
@@ -331,12 +282,21 @@ public class OsmHike extends CoreActivity implements OverlayItemFragment.OnListF
         kmlDoc = new KmlDocument();
         File localFile = kmlDoc.getDefaultPathForAndroid(_fname);
         kmlDoc.parseKMLFile(localFile);
-        String name = kmlDoc.mKmlRoot.mItems.get(0).mName;
         FolderOverlay kmlOverlay = (FolderOverlay)kmlDoc.mKmlRoot.buildOverlay(mMapView, null, null, kmlDoc);
         mMapView.getOverlays().add(kmlOverlay);
         BoundingBox bb = kmlDoc.mKmlRoot.getBoundingBox();
         mMapView.getController().setCenter(bb.getCenter());
         mMapView.zoomToBoundingBox(bb,false); //This pretty much has to be false for this to actually work, yay!
+        mMapView.invalidate();
+    }
+    public void addKmlGivenFile(File _kmlFile){
+        kmlDoc = new KmlDocument();
+        kmlDoc.parseKMLFile(_kmlFile);
+        FolderOverlay kmlOverlay = (FolderOverlay)kmlDoc.mKmlRoot.buildOverlay(mMapView, null, null, kmlDoc);
+        mMapView.getOverlays().add(kmlOverlay);
+        BoundingBox bb = kmlDoc.mKmlRoot.getBoundingBox();
+        mMapView.getController().setCenter(bb.getCenter());
+        mMapView.zoomToBoundingBox(bb,false); //This pret
         mMapView.invalidate();
     }
 
@@ -435,19 +395,67 @@ public class OsmHike extends CoreActivity implements OverlayItemFragment.OnListF
         mMapView.setMultiTouchControls(true);
         mMapController = mMapView.getController();
         mMapController.setZoom(5);
-        startPoint = new GeoPoint(39.143407, -108.701759);
-        mMapController.setCenter(startPoint);
-
-        //This is the follow location stuff
-        mLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(_ctx),mMapView);
-        mLocationOverlay.enableMyLocation();
-        mLocationOverlay.enableFollowLocation();
-        mMapView.getOverlays().add(this.mLocationOverlay);
 
         //This enables the gestures for rotations and zooming
         mRotationGestureOverlay = new RotationGestureOverlay(_ctx, mMapView);
         mRotationGestureOverlay.setEnabled(true);
         mMapView.setMultiTouchControls(true);
         mMapView.getOverlays().add(this.mRotationGestureOverlay);
+
+        overlayItemList = new ArrayList<OverlayItem>();
+        //items.add(new OverlayItem("Title", "Description", new GeoPoint(39.143407,-108.701759))); // Lat/Lon decimal degrees
+        //the overlay
+        mOverlay = new ItemizedOverlayWithFocus<OverlayItem>(overlayItemList,
+                new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
+                    @Override
+                    public boolean onItemSingleTapUp(final int index, final OverlayItem item) {
+                        //do something
+                        //TODO: figure out the functionality for this
+                        return true;
+                    }
+                    @Override
+                    public boolean onItemLongPress(final int index, final OverlayItem item) {
+                        //TODO: make item long press bring up a dialog to ask the user if they want to delete the marker
+                        overlayItemList.clear();
+                        mMapView.invalidate();
+                        return false;
+                    }
+                },_ctx);
+        mOverlay.setFocusItemsOnTap(true);
+        mMapView.getOverlays().add(mOverlay);
+
+
+
+        MapEventsReceiver mReceive = new MapEventsReceiver() {
+            @Override
+            public boolean singleTapConfirmedHelper(GeoPoint p) {
+                //Toast.makeText(getBaseContext(),p.getLatitude() + " - "+p.getLongitude(),Toast.LENGTH_LONG).show();
+                //TODO: Figure out this logic
+                return false;
+            }
+
+            @Override
+            public boolean longPressHelper(GeoPoint point) {
+                currentLongPressPoint = point;
+                selectLongPressAction();
+                return false;
+            }
+        };
+
+        MapEventsOverlay OverlayEvents = new MapEventsOverlay(getBaseContext(), mReceive);
+        mMapView.getOverlays().add(OverlayEvents);
+
+        startPoint = new GeoPoint(39.143407, -108.701759);
+        mMapController.setCenter(startPoint);
+
+
+        mMapView.invalidate();
+
+
+        //This is the follow location stuff
+        //mLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(_ctx),mMapView);
+        //mLocationOverlay.enableMyLocation();
+        //mLocationOverlay.enableFollowLocation();
+        //mMapView.getOverlays().add(this.mLocationOverlay);
     }
 }

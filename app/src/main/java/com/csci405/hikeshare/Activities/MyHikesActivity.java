@@ -39,7 +39,9 @@ public class MyHikesActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 File curKMLFile = filelist[position];
                 Intent intent = new Intent(ctx, OsmHike.class);
-                intent.putExtra("KMLFILE",curKMLFile);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("SerialFile", curKMLFile);
+                intent.putExtra("KMLFILE",bundle);
                 startActivity(intent);
             }
         });
