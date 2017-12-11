@@ -15,6 +15,10 @@
     <string name="display_markers">Display Markers</string>
     <string name="power_save_enabled">Power Save Enabled</string>
     <string name="map_source">Map Source</string>
+    <string name="openkmlfile">Open KMl File</string>
+
+    <string name="download_by_region">Download by region</string>
+    <string name="download_by_path">Download by path</string>
 
     <!--Main Activity Strings-->
     <string name="gohike">Go Hike!</string>

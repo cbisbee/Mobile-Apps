@@ -41,6 +41,12 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:id="@+id/download_region_Btn"
+            android:text="@string/download_region"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:id="@+id/browse_cache_Btn"
             android:text="@string/browse_tile_cache"/>
 
@@ -56,11 +62,6 @@
             android:id="@+id/purge_cache_source_Btn"
             android:text="@string/purge_cache_source"/>
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/download_region_Btn"
-            android:text="@string/download_region"/>
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

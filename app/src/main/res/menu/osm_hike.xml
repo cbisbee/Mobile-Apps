@@ -34,5 +34,7 @@
         android:title="@string/power_save_enabled"
         android:checkable="true"
         android:checked="false"/>
+        <item android:id="@+id/hikeMenuOpenKML"
+            android:title="@string/openkmlfile"/>
     </group>
 </menu>

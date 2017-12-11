@@ -1,14 +1,20 @@
 package com.csci405.hikeshare.Activities;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
+import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -25,6 +31,7 @@ import com.csci405.hikeshare.R;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.bonuspack.kml.KmlDocument;
+import org.osmdroid.bonuspack.kml.KmlFeature;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.events.MapEventsReceiver;
 import org.osmdroid.tileprovider.cachemanager.CacheManager;
@@ -45,7 +52,12 @@ import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -67,6 +79,8 @@ public class OsmHike extends CoreActivity implements OverlayItemFragment.OnListF
     KmlDocument kmlDoc;
     CacheManager mCacheManager;
     CacheManager.CacheManagerTask downloadingTask=null;
+    private static final int READ_REQUEST_CODE = 42;
+
 
     GpsMyLocationProvider mLocationProvider;
 
@@ -133,8 +147,6 @@ public class OsmHike extends CoreActivity implements OverlayItemFragment.OnListF
 
         MapEventsOverlay OverlayEvents = new MapEventsOverlay(getBaseContext(), mReceive);
         mMapView.getOverlays().add(OverlayEvents);
-
-
 
 
         /*
@@ -304,13 +316,30 @@ public class OsmHike extends CoreActivity implements OverlayItemFragment.OnListF
                 } else {
                     //go into powersave mode
                     item.setChecked(true);
-
                 }
                 return true;
+            case R.id.hikeMenuOpenKML:
+                //Add a method to actually get the file name
+                addKmlGivenFileName("TheFullOtto.kml");
+
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
+
+    public void addKmlGivenFileName(String _fname){
+        kmlDoc = new KmlDocument();
+        File localFile = kmlDoc.getDefaultPathForAndroid(_fname);
+        kmlDoc.parseKMLFile(localFile);
+        String name = kmlDoc.mKmlRoot.mItems.get(0).mName;
+        FolderOverlay kmlOverlay = (FolderOverlay)kmlDoc.mKmlRoot.buildOverlay(mMapView, null, null, kmlDoc);
+        mMapView.getOverlays().add(kmlOverlay);
+        BoundingBox bb = kmlDoc.mKmlRoot.getBoundingBox();
+        mMapView.getController().setCenter(bb.getCenter());
+        mMapView.zoomToBoundingBox(bb,false); //This pretty much has to be false for this to actually work, yay!
+        mMapView.invalidate();
+    }
+
 
     public void selectLongPressAction() {
         DialogFragment newFragment = new OverlayItemFragment();
