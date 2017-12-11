@@ -133,7 +133,7 @@
 
 
     <!-- Customize Activity Strings -->
-    <string name="settings_display_map_markers">Display Map Markers</string>
+    <string name="settings_follow_me">Follow Location</string>
     <string name="settings_display_map_compass">Display Map Compass</string>
     <string name="settings_default_source">Default Map Source</string>
     <string name="settings_offline_mode_enabled">Offline Mode Enabled</string>

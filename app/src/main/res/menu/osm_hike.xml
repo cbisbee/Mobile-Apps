@@ -26,8 +26,8 @@
         android:title="@string/compass"
         android:checkable="true"
         android:checked="true"/>
-    <item android:id="@+id/hikeMenuDisplayMarkers"
-        android:title="@string/display_markers"
+    <item android:id="@+id/hikeMenuFollow"
+        android:title="@string/settings_follow_me"
         android:checkable="true"
         android:checked="true"/>
     <item android:id="@+id/hikeMenuPowerSave"

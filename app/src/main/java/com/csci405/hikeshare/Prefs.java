@@ -110,12 +110,12 @@ public class Prefs implements AutoCloseable {
         }
     }
 
-    public static final String MARKERS = "markers";
-    public static final boolean MARKERS_DEFAULT = false;
-    public boolean markers() {return preferences().getBoolean(MARKERS,MARKERS_DEFAULT);}
-    public void markers(boolean value) {
-        if(markers() != value){
-            editor().putBoolean(MARKERS,value);
+    public static final String FOLLOW = "follow";
+    public static final boolean FOLLOW_DEFAULT = false;
+    public boolean follow() {return preferences().getBoolean(FOLLOW,FOLLOW_DEFAULT);}
+    public void follow(boolean value) {
+        if(follow() != value){
+            editor().putBoolean(FOLLOW,value);
         }
     }
 

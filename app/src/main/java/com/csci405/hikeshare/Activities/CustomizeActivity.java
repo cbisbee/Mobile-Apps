@@ -15,7 +15,7 @@ import com.csci405.hikeshare.R;
 
 public class CustomizeActivity extends CoreActivity {
     Prefs mPrefs;
-    ToggleButton mapMarkerToggle;
+    ToggleButton followMeToggle;
     ToggleButton compassToggle;
     ToggleButton scalebarToggle;
     ToggleButton zoomToggle;
@@ -25,10 +25,10 @@ public class CustomizeActivity extends CoreActivity {
 
     @Override
     protected void onResume(){
-        if(prefs().markers()){
-            mapMarkerToggle.setChecked(true);
+        if(prefs().follow()){
+            followMeToggle.setChecked(true);
         } else {
-            mapMarkerToggle.setChecked(false);
+            followMeToggle.setChecked(false);
         }
 
         if(prefs().compass()){
@@ -89,7 +89,7 @@ public class CustomizeActivity extends CoreActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_customize);
 
-        mapMarkerToggle = (ToggleButton)findViewById(R.id.show_map_markers_Toggle);
+        followMeToggle = (ToggleButton)findViewById(R.id.show_map_markers_Toggle);
         compassToggle = (ToggleButton)findViewById(R.id.show_map_compass_Toggle);
         scalebarToggle = (ToggleButton)findViewById(R.id.show_scale_bar_Toggle);
         zoomToggle = (ToggleButton)findViewById(R.id.show_zoom_buttons_Toggle);
@@ -97,12 +97,12 @@ public class CustomizeActivity extends CoreActivity {
         offlineToggle = (ToggleButton)findViewById(R.id.soffline_mode_enabled_Toggle);
         mapSourceSpinner = (Spinner)findViewById(R.id.map_source_Spinner);
 
-        mapMarkerToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        followMeToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    prefs().markers(true);
+                    prefs().follow(true);
                 } else {
-                    prefs().markers(false);
+                    prefs().follow(false);
                 }
             }
         });

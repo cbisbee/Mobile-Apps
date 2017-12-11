@@ -87,52 +87,16 @@ public class OsmHike extends CoreActivity implements OverlayItemFragment.OnListF
         attributionView = (TextView)findViewById(R.id.osm_hike_attributionTV);
         mMapView = (MapView) findViewById(R.id.map);
         mCacheManager = new CacheManager(mMapView);
-
         mCompassOverlay = new CompassOverlay(ctx, new InternalCompassOrientationProvider(ctx), mMapView);
-
+        mLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(ctx),mMapView);
         prepareTheMap(ctx);
 
-        /*
-        //KML Stuff
-        kmlDoc = new KmlDocument();
-        //File localFile = kmlDoc.getDefaultPathForAndroid("my_route.kml");
-        //kmlDoc.parseKMLFile(localFile);
-        String url = "http://mapsengine.google.com/map/kml?forcekml=1&mid=12phHnQP7CcPH07FaT9p1YyaNvCE";
-        //String url = "http://www.yournavigation.org/api/1.0/gosmore.php?format=kml&flat=52.215676&flon=5.963946&tlat=52.2573&tlon=6.1799%27%3Ehttp://www.yournavigation.org/api/1.0/gosmore.php?format=kml&amp;flat=52.215676&amp;flon=5.963946&amp;tlat=52.2573&amp;tlon=6.1799";
-        //String url = "testfail";
-
-        AsyncKmlRetriever.AsyncGet kmlUrlRetriever = new AsyncKmlRetriever.AsyncGet() {
-            @Override
-            public void getKml() {
-                try {
-                    kmlDoc.parseKMLUrl(url);
-
-                    //Set up the map overlay for the KML
-                    FolderOverlay kmlOverlay = (FolderOverlay)kmlDoc.mKmlRoot.buildOverlay(mMapView, null, null, kmlDoc);
-                    mMapView.getOverlays().add(kmlOverlay);
-                    BoundingBox bb = kmlDoc.mKmlRoot.getBoundingBox();
-                    mMapView.getController().setCenter(bb.getCenter());
-                    mMapView.zoomToBoundingBox(bb,false); //This pretty much has to be false for this to actually work, yay!
-                    mMapView.invalidate();
-
-                } catch (Exception e){
-                    e.printStackTrace();
-                }
-            }
-        };
-
-        AsyncKmlRetriever asyncGetter = new AsyncKmlRetriever(getApplicationContext(),kmlUrlRetriever);
-        asyncGetter.execute();
-
         //kmlDoc.saveAsKML(localFile);
-        */
     }
 
     @Override
     public void onResume(){
         super.onResume();
-        //this will refresh the osmdroid configuration on resuming.
-        //if you make changes to the configuration, use
         //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         //Configuration.getInstance().save(this, prefs);
         //Configuration.getInstance().load(this, PreferenceManager.getDefaultSharedPreferences(this));
@@ -173,7 +137,7 @@ public class OsmHike extends CoreActivity implements OverlayItemFragment.OnListF
             menu.getItem(2).setChecked(false);
         }
 
-        if(mPrefs.markers()){
+        if(mPrefs.follow()){
             menu.getItem(3).setChecked(true);
         } else {
             menu.getItem(3).setChecked(false);
@@ -242,13 +206,19 @@ public class OsmHike extends CoreActivity implements OverlayItemFragment.OnListF
                     item.setChecked(true);
                 }
                 return true;
-            case R.id.hikeMenuDisplayMarkers:
+            case R.id.hikeMenuFollow:
                 if(item.isChecked()){
-                    //remove the markers
+                    //Disable tracking
                     item.setChecked(false);
+                    mLocationOverlay.disableFollowLocation();
+                    mLocationOverlay.disableMyLocation();
+                    mMapView.invalidate();
                 }else {
-                    //add the markers
+                    //Enable tracking
                     item.setChecked(true);
+                    mLocationOverlay.enableFollowLocation();
+                    mLocationOverlay.enableMyLocation();
+                    mMapView.invalidate();
                 }
                 return true;
             case R.id.hikeMenuPowerSave:
@@ -391,7 +361,14 @@ public class OsmHike extends CoreActivity implements OverlayItemFragment.OnListF
             mMapView.setUseDataConnection(true);
         }
 
-        //This is the default start lcoation
+        if(prefs().follow()){
+            //This is the follow location stuff
+            mLocationOverlay.enableMyLocation();
+            mLocationOverlay.enableFollowLocation();
+            mMapView.getOverlays().add(this.mLocationOverlay);
+        }
+
+
         mMapView.setMultiTouchControls(true);
         mMapController = mMapView.getController();
         mMapController.setZoom(5);
@@ -450,12 +427,5 @@ public class OsmHike extends CoreActivity implements OverlayItemFragment.OnListF
 
 
         mMapView.invalidate();
-
-
-        //This is the follow location stuff
-        //mLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(_ctx),mMapView);
-        //mLocationOverlay.enableMyLocation();
-        //mLocationOverlay.enableFollowLocation();
-        //mMapView.getOverlays().add(this.mLocationOverlay);
     }
 }
