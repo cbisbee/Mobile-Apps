@@ -1,6 +1,7 @@
 package com.csci405.hikeshare.Activities;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
@@ -10,10 +11,12 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.csci405.hikeshare.BuildConfig;
@@ -73,7 +76,7 @@ public class OsmHike extends CoreActivity implements OverlayItemFragment.OnListF
 
     boolean recordhike = false;
     boolean kmlDocStarted = false;
-    String kmlDocName = "";
+    String kmlDocName = "default_name";
     KmlDocument kmlCurHikeDoc;
     File localHikeFile;
 
@@ -113,11 +116,7 @@ public class OsmHike extends CoreActivity implements OverlayItemFragment.OnListF
                         startStopBtn.setImageResource(R.drawable.ic_pause_black_24px);
                         if(!kmlDocStarted){
                             //Bring up a dialog here that will prompt user to enter the name of hike
-                            //kmlDocName result of dialog
-                            kmlCurHikeDoc = new KmlDocument();
-                            localHikeFile = kmlCurHikeDoc.getDefaultPathForAndroid("my_route.kml");
-                            kmlCurHikeDoc.mKmlRoot.mName = "my_route";
-                            kmlCurHikeDoc.saveAsKML(localHikeFile);
+                            askForHikeNameDialog();
                         }
                     } else {
                         Toast.makeText(getBaseContext(),"Following is currently disabled, can't start hiking!",Toast.LENGTH_LONG).show();
@@ -298,6 +297,26 @@ public class OsmHike extends CoreActivity implements OverlayItemFragment.OnListF
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void askForHikeNameDialog() {
+        AlertDialog.Builder b = new AlertDialog.Builder(this);
+        b.setTitle("Enter the name of this hike");
+        final EditText input = new EditText(this);
+        b.setView(input);
+        b.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int whichButton) {
+               kmlDocName = input.getText().toString();
+                kmlCurHikeDoc = new KmlDocument();
+                localHikeFile = kmlCurHikeDoc.getDefaultPathForAndroid(kmlDocName + ".kml");
+                kmlCurHikeDoc.mKmlRoot.mName = kmlDocName;
+                kmlCurHikeDoc.saveAsKML(localHikeFile);
+                kmlDocStarted = true;
+            }
+        });
+        b.setNegativeButton("CANCEL", null);
+        b.show();
     }
 
     public void addKmlGivenFileName(String _fname){

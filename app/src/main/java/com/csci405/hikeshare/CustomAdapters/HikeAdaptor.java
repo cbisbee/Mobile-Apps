@@ -38,7 +38,8 @@ public class HikeAdaptor extends ArrayAdapter {
         Hike item = new Hike("","");
         KmlDocument kmlDoc = new KmlDocument();
         kmlDoc.parseKMLFile(curFile);
-        item.hikeName = kmlDoc.mKmlRoot.mItems.get(0).mName;
+
+        item.hikeName = kmlDoc.mKmlRoot.mName;
         item.lastModified = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(
                 new Date(curFile.lastModified())
         );
