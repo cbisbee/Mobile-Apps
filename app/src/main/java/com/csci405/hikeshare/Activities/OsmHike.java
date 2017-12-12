@@ -556,6 +556,7 @@ public class OsmHike extends CoreActivity implements OverlayItemFragment.OnListF
     @Override
     public void onDestroy(){
         locationManager.removeUpdates(hikeLocationListener);
+        hikeLocationListener.unregisterForPointsUpdates(this);
         super.onDestroy();
     }
 }

@@ -111,6 +111,10 @@ public class HikeLocationListener implements LocationListener {
         listeners.add(newListener);
     }
 
+    public void unregisterForPointsUpdates(PolylinePointListener listener){
+        listeners.remove(listener);
+    }
+
     private void notfylisteners(){
         for(int i = 0; i < listeners.size(); ++i){
             listeners.get(i).onPolylinePointReceive(pointCollection);
