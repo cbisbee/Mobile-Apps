@@ -5,12 +5,11 @@ package com.csci405.hikeshare;
  */
 
 
-import android.content.Context;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 //import com.google.firebase.database.DatabaseReference;
 //import com.google.firebase.database.FirebaseDatabase;
-import static com.csci405.hikeshare.Util.*;
+import static com.csci405.hikeshare.Utilities.Util.*;
 
 public class User {
 

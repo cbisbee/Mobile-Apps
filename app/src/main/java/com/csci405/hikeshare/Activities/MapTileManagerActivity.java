@@ -15,7 +15,7 @@ import android.widget.Toast;
 
 import com.csci405.hikeshare.CustomAdapters.CacheAdapter;
 import com.csci405.hikeshare.R;
-import com.csci405.hikeshare.SqlTileWriterExt;
+import com.csci405.hikeshare.Utilities.SqlTileWriterExt;
 
 import org.osmdroid.tileprovider.modules.SqlTileWriter;
 

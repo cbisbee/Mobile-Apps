@@ -1,4 +1,4 @@
-package com.csci405.hikeshare;
+package com.csci405.hikeshare.Utilities;
 
 import android.content.Context;
 import android.os.AsyncTask;

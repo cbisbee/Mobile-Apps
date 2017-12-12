@@ -12,7 +12,7 @@ import android.content.SharedPreferences;
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.csci405.hikeshare.Util.*;
+import static com.csci405.hikeshare.Utilities.Util.*;
 
 
 public class Prefs implements AutoCloseable {

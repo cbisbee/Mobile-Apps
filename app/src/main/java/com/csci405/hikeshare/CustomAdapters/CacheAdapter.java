@@ -8,11 +8,11 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.csci405.hikeshare.FileDateUtil;
-import com.csci405.hikeshare.HumanTime;
-import com.csci405.hikeshare.MapTileExt;
+import com.csci405.hikeshare.Utilities.FileDateUtil;
+import com.csci405.hikeshare.Utilities.HumanTime;
+import com.csci405.hikeshare.Utilities.MapTileExt;
 import com.csci405.hikeshare.R;
-import com.csci405.hikeshare.SqlTileWriterExt;
+import com.csci405.hikeshare.Utilities.SqlTileWriterExt;
 
 import org.osmdroid.tileprovider.modules.DatabaseFileArchive;
 import org.osmdroid.tileprovider.modules.SqlTileWriter;

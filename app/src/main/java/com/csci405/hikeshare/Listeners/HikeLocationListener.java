@@ -1,8 +1,10 @@
-package com.csci405.hikeshare;
+package com.csci405.hikeshare.Listeners;
 
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
+
+import com.csci405.hikeshare.Listeners.PolylinePointListener;
 
 import org.osmdroid.util.GeoPoint;
 

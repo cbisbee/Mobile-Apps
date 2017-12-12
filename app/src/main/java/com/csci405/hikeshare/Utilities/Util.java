@@ -1,10 +1,12 @@
-package com.csci405.hikeshare;
+package com.csci405.hikeshare.Utilities;
 
 /**
  * Created by Charles on 10/25/2017.
  */
 
 import android.util.Log;
+
+import com.csci405.hikeshare.CoreActivity;
 
 
 public class Util {

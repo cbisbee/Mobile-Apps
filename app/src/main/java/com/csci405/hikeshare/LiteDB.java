@@ -4,18 +4,12 @@ package com.csci405.hikeshare;
  * Created by Charles on 10/25/2017.
  */
 
-import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Objects;
-
-import static com.csci405.hikeshare.Util.eq;
+import static com.csci405.hikeshare.Utilities.Util.eq;
 
 
 public class LiteDB extends SQLiteOpenHelper implements AutoCloseable {

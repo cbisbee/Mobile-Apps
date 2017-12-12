@@ -1,4 +1,4 @@
-package com.csci405.hikeshare;
+package com.csci405.hikeshare.Listeners;
 
 import org.osmdroid.util.GeoPoint;
 
