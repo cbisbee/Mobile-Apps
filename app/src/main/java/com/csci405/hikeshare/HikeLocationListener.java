@@ -84,6 +84,12 @@ public class HikeLocationListener implements LocationListener {
         return pointCollection;
     }
 
+    public ArrayList<GeoPoint> getGeoPointCollectionAndClear(){
+        ArrayList<GeoPoint> retValue = pointCollection;
+        pointCollection.clear();
+        return retValue;
+    }
+
     public double getMinLocationUpdateDistance(){
         return minLocationUpdateDistance;
     }

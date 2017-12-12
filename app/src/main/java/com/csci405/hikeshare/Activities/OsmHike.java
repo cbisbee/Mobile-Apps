@@ -2,7 +2,6 @@ package com.csci405.hikeshare.Activities;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
@@ -294,8 +293,17 @@ public class OsmHike extends CoreActivity implements OverlayItemFragment.OnListF
                 test.add(new GeoPoint(39.2,-108.0));
                 test.add(new GeoPoint(39.3,-108.0));
                 test.add(new GeoPoint(39.4,-108.0));
-                test.add(new GeoPoint(39.5,-108.0));
+                test.add(new GeoPoint(39.5,-108.1));
+                test.add(new GeoPoint(39.3,-108.5));
+                test.add(new GeoPoint(39.1,-108.3));
+                test.add(new GeoPoint(39.7,-108.4));
+                test.add(new GeoPoint(39.8,-108.5));
+                test.add(new GeoPoint(39.7,-108.1));
+                test.add(new GeoPoint(39.9,-108.2));
                 geoPointsIntoPolyline(test);
+
+                //This is the actual call that needs to be made
+                //geoPointsIntoPolyline(hikeLocationListener.getGeoPointCollectionAndClear());
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

@@ -41,8 +41,9 @@ public class OverlayItemFragment extends DialogFragment {
         final String[] overlayItemsArray = getResources().getStringArray(R.array.overlay_items);
         List<String> overlayItemsArrayList = Arrays.asList(overlayItemsArray);
         final Integer[] icons = new Integer[]
-                {R.drawable.common_google_signin_btn_icon_dark_focused,R.drawable.bonuspack_bubble,
-                R.drawable.ic_menu_send,R.drawable.common_google_signin_btn_text_dark_normal,R.drawable.osm_ic_center_map};
+                {R.drawable.ic_archery,R.drawable.ic_boat_ramp,R.drawable.ic_boating,R.drawable.ic_campground,R.drawable.ic_canoe,R.drawable.ic_climbing,
+                R.drawable.ic_natural_feature,R.drawable.ic_cross_country_skiing,R.drawable.ic_fishing_pier,R.drawable.ic_hang_gliding,R.drawable.ic_kayaking,
+                R.drawable.ic_map_pin,R.drawable.ic_shield,R.drawable.ic_route,R.drawable.ic_snowboarding,R.drawable.ic_swimming};
 
         ListAdapter adapter = new ArrayAdapterWithIcon(getActivity(), overlayItemsArrayList, icons);
 
