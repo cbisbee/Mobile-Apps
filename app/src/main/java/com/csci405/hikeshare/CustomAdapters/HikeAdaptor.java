@@ -29,7 +29,7 @@ public class HikeAdaptor extends ArrayAdapter {
 
     @Override
     public int getCount() {
-        return filelist.length - 1;
+        return filelist.length;
     }
 
     @Override

@@ -1,25 +1,18 @@
 package com.csci405.hikeshare.Activities;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.database.Cursor;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
-import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,7 +29,6 @@ import org.osmdroid.events.MapEventsReceiver;
 import org.osmdroid.tileprovider.cachemanager.CacheManager;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.BoundingBox;
-import org.osmdroid.util.BoundingBoxE6;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.FolderOverlay;
@@ -44,14 +36,17 @@ import org.osmdroid.views.overlay.ItemizedIconOverlay;
 import org.osmdroid.views.overlay.ItemizedOverlayWithFocus;
 import org.osmdroid.views.overlay.MapEventsOverlay;
 import org.osmdroid.views.overlay.OverlayItem;
+import org.osmdroid.views.overlay.Polyline;
 import org.osmdroid.views.overlay.ScaleBarOverlay;
 import org.osmdroid.views.overlay.compass.CompassOverlay;
 import org.osmdroid.views.overlay.compass.InternalCompassOrientationProvider;
 import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
+import org.osmdroid.views.overlay.infowindow.BasicInfoWindow;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 
@@ -75,7 +70,13 @@ public class OsmHike extends CoreActivity implements OverlayItemFragment.OnListF
     FloatingActionButton startStopBtn;
     HikeLocationListener hikeLocationListener;
     LocationManager locationManager;
+
     boolean recordhike = false;
+    boolean kmlDocStarted = false;
+    String kmlDocName = "";
+    KmlDocument kmlCurHikeDoc;
+    File localHikeFile;
+
 
 
     GpsMyLocationProvider mLocationProvider;
@@ -89,11 +90,12 @@ public class OsmHike extends CoreActivity implements OverlayItemFragment.OnListF
         Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);
         mLocationProvider = new GpsMyLocationProvider(ctx);
         hikeLocationListener = new HikeLocationListener();
-        hikeLocationListener.setMinLocationUpdateDistance(.01); //Minimum update distance is .01 miles
+        hikeLocationListener.setMinLocationUpdateDistance(0); //Minimum update distance is .01 miles
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         Set<String> sources = mLocationProvider.getLocationSources();
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
+        recordhike = false;
 
         setContentView(R.layout.activity_osm_hike);
         attributionView = (TextView)findViewById(R.id.osm_hike_attributionTV);
@@ -103,12 +105,20 @@ public class OsmHike extends CoreActivity implements OverlayItemFragment.OnListF
             @Override
             public void onClick(View view) {
                 if(recordhike){
-                    startStopBtn.setImageResource(R.drawable.ic_pause_black_24px);
+                    startStopBtn.setImageResource(R.drawable.ic_play_arrow_black_24px);
                     recordhike = false;
                 } else {
                     if(mPrefs.follow()) {
                         recordhike = true;
-                        startStopBtn.setImageResource(R.drawable.ic_play_arrow_black_24px);
+                        startStopBtn.setImageResource(R.drawable.ic_pause_black_24px);
+                        if(!kmlDocStarted){
+                            //Bring up a dialog here that will prompt user to enter the name of hike
+                            //kmlDocName result of dialog
+                            kmlCurHikeDoc = new KmlDocument();
+                            localHikeFile = kmlCurHikeDoc.getDefaultPathForAndroid("my_route.kml");
+                            kmlCurHikeDoc.mKmlRoot.mName = "my_route";
+                            kmlCurHikeDoc.saveAsKML(localHikeFile);
+                        }
                     } else {
                         Toast.makeText(getBaseContext(),"Following is currently disabled, can't start hiking!",Toast.LENGTH_LONG).show();
                     }
@@ -273,7 +283,18 @@ public class OsmHike extends CoreActivity implements OverlayItemFragment.OnListF
                 } else {
                     Toast.makeText(getBaseContext(),"No hike selected, go to MyHikes and select a hike!",Toast.LENGTH_LONG).show();
                 }
-
+                return true;
+            case R.id.trace:
+                //geoPointsIntoPolyline(hikeLocationListener.getGeoPointCollection());
+                ArrayList<GeoPoint> test = new ArrayList<>();
+                test.add(new GeoPoint(39.0,-108.0));
+                test.add(new GeoPoint(39.1,-108.0));
+                test.add(new GeoPoint(39.2,-108.0));
+                test.add(new GeoPoint(39.3,-108.0));
+                test.add(new GeoPoint(39.4,-108.0));
+                test.add(new GeoPoint(39.5,-108.0));
+                geoPointsIntoPolyline(test);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -299,6 +320,26 @@ public class OsmHike extends CoreActivity implements OverlayItemFragment.OnListF
         mMapView.getController().setCenter(bb.getCenter());
         mMapView.zoomToBoundingBox(bb,false); //This pret
         mMapView.invalidate();
+    }
+
+    public void geoPointsIntoPolyline(ArrayList<GeoPoint> pointList){
+        Polyline polyline;
+        List<List<GeoPoint>> polyLines = new ArrayList<>();
+        polyLines.add(pointList);
+        for (int i = 0; i < polyLines.size(); i++) {
+            polyline = new Polyline();
+            int count = polyline.getNumberOfPoints();
+            polyline.setPoints(polyLines.get(i));
+            count = polyline.getNumberOfPoints();
+            polyline.setColor(Color.RED);
+            polyline.setWidth(5);
+            polyline.setInfoWindow(new BasicInfoWindow(R.layout.bonuspack_bubble, mMapView));
+            polyline.setTitle("This is your hike path!");
+            mMapView.getOverlays().add(polyline);
+            kmlCurHikeDoc.mKmlRoot.addOverlay(polyline,kmlCurHikeDoc);
+        }
+        mMapView.invalidate();
+        kmlCurHikeDoc.saveAsKML(localHikeFile);
     }
 
 

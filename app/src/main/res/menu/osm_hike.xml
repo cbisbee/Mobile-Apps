@@ -36,5 +36,7 @@
         android:checked="false"/>
         <item android:id="@+id/hikeMenuOpenKML"
             android:title="@string/openkmlfile"/>
+        <item android:id="@+id/trace"
+            android:title="trace"/>
     </group>
 </menu>

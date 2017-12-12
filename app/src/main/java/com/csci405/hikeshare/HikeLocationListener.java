@@ -18,6 +18,12 @@ public class HikeLocationListener implements LocationListener {
     boolean currentlyHiking;
     double minLocationUpdateDistance;
 
+    public HikeLocationListener(){
+        pointCollection = new ArrayList<>();
+        currentlyHiking = false;
+        minLocationUpdateDistance = .000001;
+    }
+
     private double degreesToRadians(double degrees) {
         return degrees * Math.PI / 180;
     }
@@ -42,11 +48,6 @@ public class HikeLocationListener implements LocationListener {
         return earthRadiusMi * c;
     }
 
-    public HikeLocationListener(){
-        pointCollection = new ArrayList<>();
-        currentlyHiking = false;
-        minLocationUpdateDistance = .01;
-    }
     public void onLocationChanged(Location location) {
         if(currentLocation == null){
             currentLocation = new GeoPoint(location);
