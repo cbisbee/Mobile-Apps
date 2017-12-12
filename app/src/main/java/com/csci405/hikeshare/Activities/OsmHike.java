@@ -89,10 +89,12 @@ public class OsmHike extends CoreActivity implements OverlayItemFragment.OnListF
         Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);
         mLocationProvider = new GpsMyLocationProvider(ctx);
         hikeLocationListener = new HikeLocationListener();
+        hikeLocationListener.setMinLocationUpdateDistance(.01); //Minimum update distance is .01 miles
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         Set<String> sources = mLocationProvider.getLocationSources();
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
+
         setContentView(R.layout.activity_osm_hike);
         attributionView = (TextView)findViewById(R.id.osm_hike_attributionTV);
         mMapView = (MapView) findViewById(R.id.map);
@@ -104,8 +106,12 @@ public class OsmHike extends CoreActivity implements OverlayItemFragment.OnListF
                     startStopBtn.setImageResource(R.drawable.ic_pause_black_24px);
                     recordhike = false;
                 } else {
-                    startStopBtn.setImageResource(R.drawable.ic_play_arrow_black_24px);
-                    recordhike = true;
+                    if(mPrefs.follow()) {
+                        recordhike = true;
+                        startStopBtn.setImageResource(R.drawable.ic_play_arrow_black_24px);
+                    } else {
+                        Toast.makeText(getBaseContext(),"Following is currently disabled, can't start hiking!",Toast.LENGTH_LONG).show();
+                    }
                 }
                 hikeLocationListener.setCurrentlyHiking(recordhike);
             }
@@ -236,6 +242,7 @@ public class OsmHike extends CoreActivity implements OverlayItemFragment.OnListF
                     item.setChecked(false);
                     mLocationOverlay.disableFollowLocation();
                     mLocationOverlay.disableMyLocation();
+                    hikeLocationListener.setCurrentlyHiking(false);
                     mMapView.invalidate();
                 }else {
                     //Enable tracking

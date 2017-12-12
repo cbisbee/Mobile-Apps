@@ -9,35 +9,45 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="20dp">
+        android:padding="20dp"
+        android:background="@color/colorLightAccent">
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight=".25"
+            android:layout_margin="15dp"
             android:id="@+id/main_activity_GoHike_btn"
-            android:text="@string/gohike"/>
+            android:text="@string/gohike"
+            android:background="@color/colorPrimary"/>
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight=".25"
+            android:layout_margin="15dp"
             android:id="@+id/main_activity_MyHikes_btn"
-            android:text="@string/myhikes"/>
+            android:text="@string/myhikes"
+            android:background="@color/colorPrimary"
+            />
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight=".25"
+            android:layout_margin="15dp"
             android:id="@+id/main_activity_MapTileManager_btn"
-            android:text="@string/maptilemanager"/>
+            android:text="@string/maptilemanager"
+            android:background="@color/colorPrimary"/>
 
         <Button
             android:layout_width="match_parent"
+            android:layout_margin="15dp"
             android:layout_height="0dp"
             android:layout_weight=".25"
             android:id="@+id/main_activity_Customize_btn"
-            android:text="@string/customize"/>
+            android:text="@string/customize"
+            android:background="@color/colorPrimary"/>
 
     </LinearLayout>
 

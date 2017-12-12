@@ -48,7 +48,10 @@ public class HikeLocationListener implements LocationListener {
         minLocationUpdateDistance = .01;
     }
     public void onLocationChanged(Location location) {
-        if(distanceInMilesBetweenPoints(currentLocation,new GeoPoint(location)) >= minLocationUpdateDistance){
+        if(currentLocation == null){
+            currentLocation = new GeoPoint(location);
+        }
+        else if(distanceInMilesBetweenPoints(currentLocation,new GeoPoint(location)) >= minLocationUpdateDistance){
             if(currentlyHiking){
                 currentLocation = new GeoPoint(location);
                 pointCollection.add(currentLocation);
