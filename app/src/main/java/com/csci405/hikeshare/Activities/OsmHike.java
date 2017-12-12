@@ -7,10 +7,12 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
@@ -24,6 +26,7 @@ import android.widget.Toast;
 import com.csci405.hikeshare.BuildConfig;
 import com.csci405.hikeshare.CoreActivity;
 import com.csci405.hikeshare.Fragments.OverlayItemFragment;
+import com.csci405.hikeshare.HikeLocationListener;
 import com.csci405.hikeshare.Prefs;
 import com.csci405.hikeshare.R;
 import org.osmdroid.api.IMapController;
@@ -69,6 +72,10 @@ public class OsmHike extends CoreActivity implements OverlayItemFragment.OnListF
     KmlDocument kmlDoc;
     CacheManager mCacheManager;
     File intentKMLFile;
+    FloatingActionButton startStopBtn;
+    HikeLocationListener hikeLocationListener;
+    LocationManager locationManager;
+    boolean recordhike = false;
 
 
     GpsMyLocationProvider mLocationProvider;
@@ -81,11 +88,28 @@ public class OsmHike extends CoreActivity implements OverlayItemFragment.OnListF
         //important! set your user agent to prevent getting banned from the osm servers
         Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);
         mLocationProvider = new GpsMyLocationProvider(ctx);
+        hikeLocationListener = new HikeLocationListener();
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
         Set<String> sources = mLocationProvider.getLocationSources();
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
         setContentView(R.layout.activity_osm_hike);
         attributionView = (TextView)findViewById(R.id.osm_hike_attributionTV);
         mMapView = (MapView) findViewById(R.id.map);
+        startStopBtn = (FloatingActionButton)findViewById(R.id.start_stopBtn);
+        startStopBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(recordhike){
+                    startStopBtn.setImageResource(R.drawable.ic_pause_black_24px);
+                    recordhike = false;
+                } else {
+                    startStopBtn.setImageResource(R.drawable.ic_play_arrow_black_24px);
+                    recordhike = true;
+                }
+                hikeLocationListener.setCurrentlyHiking(recordhike);
+            }
+        });
         mCacheManager = new CacheManager(mMapView);
         mCompassOverlay = new CompassOverlay(ctx, new InternalCompassOrientationProvider(ctx), mMapView);
         mLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(ctx),mMapView);
@@ -366,6 +390,16 @@ public class OsmHike extends CoreActivity implements OverlayItemFragment.OnListF
             mLocationOverlay.enableMyLocation();
             mLocationOverlay.enableFollowLocation();
             mMapView.getOverlays().add(this.mLocationOverlay);
+
+            try {
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, hikeLocationListener);
+                Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                if (location != null) {
+                    GeoPoint currentLocation = new GeoPoint(location.getLatitude(), location.getLongitude());
+                }
+            } catch (SecurityException e){
+                Toast.makeText(getBaseContext(),"Can't get location, permission was not granted for this app!",Toast.LENGTH_LONG).show();
+            }
         }
 
 
@@ -427,5 +461,11 @@ public class OsmHike extends CoreActivity implements OverlayItemFragment.OnListF
 
 
         mMapView.invalidate();
+    }
+
+    @Override
+    public void onDestroy(){
+        locationManager.removeUpdates(hikeLocationListener);
+        super.onDestroy();
     }
 }

@@ -12,4 +12,11 @@
         android:text="@string/usgs_credit"
         android:layout_alignParentBottom="true"
         android:id="@+id/osm_hike_attributionTV"/>
+    <android.support.design.widget.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/start_stopBtn"
+        android:src="@drawable/ic_play_arrow_black_24px"
+        android:layout_alignBottom="@id/map"
+        android:layout_centerInParent="true"/>
 </RelativeLayout>

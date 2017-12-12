@@ -25,14 +25,14 @@
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight=".60"
+                    android:layout_weight=".50"
                     android:text="@string/settings_default_source"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
 
                 <Spinner
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight=".40"
+                    android:layout_weight=".50"
                     android:entries="@array/map_sources"
                     android:id="@+id/map_source_Spinner"></Spinner>
             </LinearLayout>
