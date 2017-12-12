@@ -23,6 +23,7 @@ import com.csci405.hikeshare.BuildConfig;
 import com.csci405.hikeshare.CoreActivity;
 import com.csci405.hikeshare.Fragments.OverlayItemFragment;
 import com.csci405.hikeshare.HikeLocationListener;
+import com.csci405.hikeshare.PolylinePointListener;
 import com.csci405.hikeshare.Prefs;
 import com.csci405.hikeshare.R;
 import org.osmdroid.api.IMapController;
@@ -55,7 +56,7 @@ import java.util.List;
 import java.util.Set;
 
 
-public class OsmHike extends CoreActivity implements OverlayItemFragment.OnListFragmentInteractionListener {
+public class OsmHike extends CoreActivity implements OverlayItemFragment.OnListFragmentInteractionListener, PolylinePointListener {
     IMapController mMapController;
     GeoPoint startPoint;
     GeoPoint currentLongPressPoint;
@@ -95,7 +96,8 @@ public class OsmHike extends CoreActivity implements OverlayItemFragment.OnListF
         Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);
         mLocationProvider = new GpsMyLocationProvider(ctx);
         hikeLocationListener = new HikeLocationListener();
-        hikeLocationListener.setMinLocationUpdateDistance(0); //Minimum update distance is .01 miles
+        hikeLocationListener.setMinLocationUpdateDistance(0.01); //Minimum update distance is .01 miles
+        hikeLocationListener.registerForPointsUpdates(this);
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         Set<String> sources = mLocationProvider.getLocationSources();
@@ -131,8 +133,6 @@ public class OsmHike extends CoreActivity implements OverlayItemFragment.OnListF
         mCompassOverlay = new CompassOverlay(ctx, new InternalCompassOrientationProvider(ctx), mMapView);
         mLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(ctx),mMapView);
         prepareTheMap(ctx);
-
-        //kmlDoc.saveAsKML(localFile);
     }
 
     @Override
@@ -308,6 +308,11 @@ public class OsmHike extends CoreActivity implements OverlayItemFragment.OnListF
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onPolylinePointReceive(ArrayList<GeoPoint> pointlist){
+        geoPointsIntoPolyline(pointlist);
     }
 
     private void askForHikeNameDialog() {

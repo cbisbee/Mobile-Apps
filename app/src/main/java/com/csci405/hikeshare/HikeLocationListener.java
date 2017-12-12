@@ -15,13 +15,16 @@ import java.util.ArrayList;
 public class HikeLocationListener implements LocationListener {
     GeoPoint currentLocation;
     ArrayList<GeoPoint> pointCollection;
+    ArrayList<PolylinePointListener> listeners;
     boolean currentlyHiking;
     double minLocationUpdateDistance;
+    int maxListSize = 100;
 
     public HikeLocationListener(){
         pointCollection = new ArrayList<>();
+        listeners = new ArrayList<>();
         currentlyHiking = false;
-        minLocationUpdateDistance = .000001;
+        minLocationUpdateDistance = .01;
     }
 
     private double degreesToRadians(double degrees) {
@@ -49,16 +52,22 @@ public class HikeLocationListener implements LocationListener {
     }
 
     public void onLocationChanged(Location location) {
-        if(currentLocation == null){
+        if (currentLocation == null) {
             currentLocation = new GeoPoint(location);
-        }
-        else if(distanceInMilesBetweenPoints(currentLocation,new GeoPoint(location)) >= minLocationUpdateDistance){
-            if(currentlyHiking){
-                currentLocation = new GeoPoint(location);
-                pointCollection.add(currentLocation);
+        } else {
+            if (currentlyHiking) {
+                if (distanceInMilesBetweenPoints(currentLocation, new GeoPoint(location)) >= minLocationUpdateDistance) {
+                    currentLocation = new GeoPoint(location);
+                    pointCollection.add(currentLocation);
+                    if (pointCollection.size() >= maxListSize) {
+                        notfylisteners();
+                        pointCollection.clear();
+                    }
+                }
             }
         }
     }
+
 
     public void onProviderDisabled(String provider) {
         //Something needs to go here
@@ -96,5 +105,15 @@ public class HikeLocationListener implements LocationListener {
 
     public void setMinLocationUpdateDistance(double val){
         minLocationUpdateDistance = val;
+    }
+
+    public void registerForPointsUpdates(PolylinePointListener newListener){
+        listeners.add(newListener);
+    }
+
+    private void notfylisteners(){
+        for(int i = 0; i < listeners.size(); ++i){
+            listeners.get(i).onPolylinePointReceive(pointCollection);
+        }
     }
 }
