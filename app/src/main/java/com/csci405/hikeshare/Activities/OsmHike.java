@@ -2,6 +2,7 @@ package com.csci405.hikeshare.Activities;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
@@ -38,6 +39,8 @@ import org.osmdroid.views.overlay.FolderOverlay;
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
 import org.osmdroid.views.overlay.ItemizedOverlayWithFocus;
 import org.osmdroid.views.overlay.MapEventsOverlay;
+import org.osmdroid.views.overlay.Marker;
+import org.osmdroid.views.overlay.Overlay;
 import org.osmdroid.views.overlay.OverlayItem;
 import org.osmdroid.views.overlay.Polyline;
 import org.osmdroid.views.overlay.ScaleBarOverlay;
@@ -378,6 +381,13 @@ public class OsmHike extends CoreActivity implements OverlayItemFragment.OnListF
         Drawable newMarker = ContextCompat.getDrawable(ctx, resourceId);
         olItem.setMarker(newMarker);
         mOverlay.addItem(olItem);
+        if(kmlDocStarted){
+            Marker marker = new Marker(mMapView);
+            marker.setImage(newMarker);
+            marker.setPosition(currentLongPressPoint);
+            kmlCurHikeDoc.mKmlRoot.addOverlay(marker,kmlCurHikeDoc);
+            kmlCurHikeDoc.saveAsKML(localHikeFile);
+        }
     }
 
     // The dialog fragment receives a reference to this Activity through the
